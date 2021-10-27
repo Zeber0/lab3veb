@@ -9,27 +9,30 @@ class RequestsApi:
         self.updq()
     def updq(self,q={"user-agent":"test_client"}):
         self.query=q
-    def get(self, url, **kwargs):
-        return self.session.get(self.base_url + url,headers=self.query, **kwargs)
 
-    def head(self, url, **kwargs):
-        return self.session.head(self.base_url + url, **kwargs)
+    def get(self, url, **kwargs):
+        res=self.session.get(self.base_url + url,headers=self.query, **kwargs)
+        if res.status_code!=200:
+            return None
+        else:
+            return res
 
     def post(self, url, **kwargs):
-        return self.session.post(self.base_url + url, headers=self.query, **kwargs)
+        res=self.session.post(self.base_url + url, headers=self.query, **kwargs)
+        if res.status_code!=200:
+            return None
+        else:
+            return res
 
-    def put(self, url, **kwargs):
-        return self.session.put(self.base_url + url, **kwargs)
     def __del__(self):
         self.session.close()
 
 a = RequestsApi("https://httpbin.org")
-response_3=a.get("/get", params={"key_1":"value_1"})
-print (response_3.text)
 a.updq({"user-agent": "test"})
 response_1 = a.get("/get", params={"key_1":"value_1"})
-print (response_1.text)
-a.updq()
-response = a.post("/post", data={"key_2":"value_2"})
-print (response.text)
+if response_1 is not None:
+	print("ok")
+response = a.post("/status/400", data={"key_2":"value_2"})
+if response is None:
+	print("ok")
 
